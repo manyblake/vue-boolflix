@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <input type="text" v-model="textToSearch" />
+    <input type="text" v-model="query" />
     <input type="submit" value="Cerca" @click="fetchMovie" />
     <ul>
       <li v-for="(film, i) in films" :key="i">
@@ -11,9 +11,8 @@
           <img :src="require(`./assets/img/${film.original_language}.png`)" />
         </template>
         <template v-else>
-          <img :src="require(`./assets/img/${genericFlag}`)" />
+          <img :src="genericFlag" />
         </template>
-        <!-- <img v-if="film.original_language === `en`" :src="unitedStates" /> -->
         {{ film.vote_average }}
       </li>
     </ul>
@@ -36,7 +35,6 @@ export default {
 
   data() {
     return {
-      textToSearch: ``,
       api_key: `bc703ed01f56d8c42a9afde987ee066f`,
       URI: `https://api.themoviedb.org/3/search`,
       query: ``,
@@ -54,13 +52,7 @@ export default {
   },
 
   methods: {
-    flagDoesNotExist(e) {
-      console.log("error");
-      return (e.target.src = this.fallbackImg);
-    },
     fetchMovie() {
-      this.query = this.textToSearch;
-
       axios
         .get(
           `${this.URI}/movie?api_key=${this.api_key}&language=it_IT&query=${this.query}`
