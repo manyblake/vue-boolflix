@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <input type="text" v-model="query" />
-    <input type="submit" value="Cerca" @click="fetchMovie" />
+    <input type="submit" value="Cerca" @click="fetch()" />
     <ul>
-      <li v-for="(film, i) in films" :key="i">
+      <li v-for="(film, i) in films" :key="`f` + i">
         {{ film.original_title }}
         {{ film.title }}
         {{ film.original_language }}
@@ -15,18 +15,25 @@
         </template>
         {{ film.vote_average }}
       </li>
+
+      <li v-for="(serie, i) in series" :key="`s` + i">
+        {{ serie.original_name }}
+        {{ serie.name }}
+        {{ serie.original_language }}
+        <template v-if="flags.includes(serie.original_language)">
+          <img :src="require(`./assets/img/${serie.original_language}.png`)" />
+        </template>
+        <template v-else>
+          <img :src="genericFlag" />
+        </template>
+        {{ serie.vote_average }}
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-// import germany from "./assets/img/de.png";
-// import spain from "./assets/img/es.png";
-// import france from "./assets/img/fr.png";
-// import italy from "./assets/img/it.png";
-// import unitedKingdom from "./assets/img/uk.png";
-// import unitedStates from "./assets/img/us.png";
 import genericFlag from "./assets/img/generic.png";
 
 export default {
@@ -39,20 +46,14 @@ export default {
       URI: `https://api.themoviedb.org/3/search`,
       query: ``,
       films: [],
+      series: [],
       flags: [`de`, `en`, `es`, `fr`, `it`, `uk`],
       genericFlag: genericFlag,
-      // germany: germany,
-      // spain: spain,
-      // france: france,
-      // italy: italy,
-      // unitedKingdom: unitedKingdom,
-      // unitedStates: unitedStates,
-      // genericFlag: genericFlag,
     };
   },
 
   methods: {
-    fetchMovie() {
+    fetch() {
       axios
         .get(
           `${this.URI}/movie?api_key=${this.api_key}&language=it_IT&query=${this.query}`
@@ -60,9 +61,21 @@ export default {
         .then((response) => {
           this.films.push(...response.data.results);
         });
+
+      axios
+        .get(
+          `${this.URI}/tv?api_key=${this.api_key}&language=it_IT&query=${this.query}`
+        )
+        .then((response) => {
+          this.series.push(...response.data.results);
+        });
     },
   },
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+img {
+  width: 30px;
+}
+</style>
