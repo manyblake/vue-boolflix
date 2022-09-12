@@ -3,31 +3,48 @@
     <input type="text" v-model="query" />
     <input type="submit" value="Cerca" @click="fetch()" />
     <ul>
-      <li v-for="film in films" :key="film.id">
-        {{ film.original_title }}
-        {{ film.title }}
-        <img :src="`https://image.tmdb.org/t/p/w342/${film.poster_path}`" />
-        <template v-if="flags.includes(film.original_language)">
-          <img :src="require(`../assets/img/${film.original_language}.svg`)" />
+      <li v-for="movie in movies" :key="movie.id">
+        {{ movie.original_title }}
+        {{ movie.title }}
+        <img :src="`https://image.tmdb.org/t/p/w342/${movie.poster}`" />
+        <template v-if="flags.includes(movie.lang)">
+          <img :src="require(`../assets/img/${movie.lang}.svg`)" />
         </template>
         <template v-else>
           <img :src="genericFlag" />
         </template>
-        {{ film.vote_average }}
+        {{ movie.vote }}
+
+        <template v-for="i in 5">
+          <template v-if="i <= movie.vote">
+            <font-awesome-icon :key="'fs' + i" icon="fa-solid fa-star" />
+          </template>
+          <template v-else>
+            <font-awesome-icon :key="'es' + i" icon="fa-regular fa-star" />
+          </template>
+        </template>
       </li>
 
       <li v-for="serie in series" :key="serie.id">
-        {{ serie.original_name }}
-        {{ serie.name }}
-        {{ serie.original_language }}
-        <template v-if="flags.includes(serie.original_language)">
-          <img :src="require(`../assets/img/${serie.original_language}.svg`)" />
+        {{ serie.original_title }}
+        {{ serie.title }}
+        {{ serie.lang }}
+        <template v-if="flags.includes(serie.lang)">
+          <img :src="require(`../assets/img/${serie.lang}.svg`)" />
         </template>
         <template v-else>
           <img :src="genericFlag" />
         </template>
-        {{ serie.vote_average }}
-        <!-- <template v-for="star in 5"></template> -->
+        {{ serie.vote }}
+
+        <template v-for="i in 5">
+          <template v-if="i <= serie.vote">
+            <font-awesome-icon :key="'fs' + i" icon="fa-solid fa-star" />
+          </template>
+          <template v-else>
+            <font-awesome-icon :key="'es' + i" icon="fa-regular fa-star" />
+          </template>
+        </template>
       </li>
     </ul>
   </header>
@@ -42,11 +59,43 @@ export default {
   data() {
     return {
       query: ``,
-      films: [],
-      series: [],
+      original_movies: [],
+      original_series: [],
       flags: [`de`, `en`, `es`, `fr`, `it`, `ja`, `pt`, `zh`],
       genericFlag: genericFlag,
     };
+  },
+
+  computed: {
+    movies() {
+      return this.original_movies.map((el) => {
+        const newMovie = {
+          id: el.id,
+          title: el.title,
+          original_title: el.original_title,
+          lang: el.original_language,
+          overview: el.overview,
+          poster: `https://image.tmdb.org/t/p/w342/${el.poster_path}`,
+          vote: Math.round(el.vote_average / 2),
+        };
+        return newMovie;
+      });
+    },
+
+    series() {
+      return this.original_series.map((el) => {
+        const newSerie = {
+          id: el.id,
+          title: el.name,
+          original_title: el.original_name,
+          lang: el.original_language,
+          overview: el.overview,
+          poster: `https://image.tmdb.org/t/p/w342/${el.poster_path}`,
+          vote: Math.round(el.vote_average / 2),
+        };
+        return newSerie;
+      });
+    },
   },
 
   methods: {
@@ -63,8 +112,7 @@ export default {
           },
         })
         .then((response) => {
-          this.films.push(...response.data.results);
-          //this.films(response.data.results);
+          this.original_movies.push(...response.data.results);
         });
 
       axios
@@ -75,7 +123,7 @@ export default {
           },
         })
         .then((response) => {
-          this.series.push(...response.data.results);
+          this.original_series.push(...response.data.results);
         });
     },
   },
