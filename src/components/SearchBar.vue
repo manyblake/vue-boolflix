@@ -1,101 +1,32 @@
 <template>
   <header>
-    <input type="text" v-model="query" />
-    <input type="submit" value="Cerca" @click="fetch()" />
-    <ul>
-      <li v-for="movie in movies" :key="movie.id">
-        {{ movie.original_title }}
-        {{ movie.title }}
-        <img :src="`https://image.tmdb.org/t/p/w342/${movie.poster}`" />
-        <template v-if="flags.includes(movie.lang)">
-          <img :src="require(`../assets/img/${movie.lang}.svg`)" />
-        </template>
-        <template v-else>
-          <img :src="genericFlag" />
-        </template>
-        {{ movie.vote }}
+    <div class="container">
+      <h1>Boolflix</h1>
 
-        <template v-for="i in 5">
-          <template v-if="i <= movie.vote">
-            <font-awesome-icon :key="'fs' + i" icon="fa-solid fa-star" />
-          </template>
-          <template v-else>
-            <font-awesome-icon :key="'es' + i" icon="fa-regular fa-star" />
-          </template>
-        </template>
-      </li>
-
-      <li v-for="serie in series" :key="serie.id">
-        {{ serie.original_title }}
-        {{ serie.title }}
-        {{ serie.lang }}
-        <template v-if="flags.includes(serie.lang)">
-          <img :src="require(`../assets/img/${serie.lang}.svg`)" />
-        </template>
-        <template v-else>
-          <img :src="genericFlag" />
-        </template>
-        {{ serie.vote }}
-
-        <template v-for="i in 5">
-          <template v-if="i <= serie.vote">
-            <font-awesome-icon :key="'fs' + i" icon="fa-solid fa-star" />
-          </template>
-          <template v-else>
-            <font-awesome-icon :key="'es' + i" icon="fa-regular fa-star" />
-          </template>
-        </template>
-      </li>
-    </ul>
+      <div>
+        <input type="text" v-model="query" />
+        <input
+          type="submit"
+          value="Cerca"
+          @keyup.enter="fetch()"
+          @click="fetch()"
+        />
+      </div>
+    </div>
   </header>
 </template>
 
 <script>
 import axios from "axios";
 import state from "../store.js";
-import genericFlag from "../assets/img/generic.png";
 
 export default {
   data() {
     return {
       query: ``,
-      original_movies: [],
-      original_series: [],
-      flags: [`de`, `en`, `es`, `fr`, `it`, `ja`, `pt`, `zh`],
-      genericFlag: genericFlag,
+      original_movies: state.original_movies,
+      original_series: state.original_series,
     };
-  },
-
-  computed: {
-    movies() {
-      return this.original_movies.map((el) => {
-        const newMovie = {
-          id: el.id,
-          title: el.title,
-          original_title: el.original_title,
-          lang: el.original_language,
-          overview: el.overview,
-          poster: `https://image.tmdb.org/t/p/w342/${el.poster_path}`,
-          vote: Math.round(el.vote_average / 2),
-        };
-        return newMovie;
-      });
-    },
-
-    series() {
-      return this.original_series.map((el) => {
-        const newSerie = {
-          id: el.id,
-          title: el.name,
-          original_title: el.original_name,
-          lang: el.original_language,
-          overview: el.overview,
-          poster: `https://image.tmdb.org/t/p/w342/${el.poster_path}`,
-          vote: Math.round(el.vote_average / 2),
-        };
-        return newSerie;
-      });
-    },
   },
 
   methods: {
@@ -130,4 +61,22 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+header {
+  background-color: black;
+  padding: 1rem 0;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    h1 {
+      text-transform: uppercase;
+      color: red;
+    }
+  }
+}
+</style>
