@@ -6,12 +6,12 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 /* import specific icons */
-import { faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
+import { faStarHalfStroke as halfStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as fullStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
 
 /* add icons to the library */
-library.add(faStarHalfStroke, fullStar, emptyStar);
+library.add(halfStar, fullStar, emptyStar);
 
 /* add font awesome icon component */
 Vue.component("font-awesome-icon", FontAwesomeIcon);
