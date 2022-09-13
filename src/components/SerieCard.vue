@@ -28,11 +28,24 @@
         </template>
       </p>
       <p>Overview: {{ serie.overview }}</p>
+
+      <h3>Attori:</h3>
+      <p v-for="(actor, i) in actors" :key="i">
+        <template v-if="i < 5">
+          {{ actor.name }}
+        </template>
+      </p>
+
+      <h3>Generi:</h3>
+      <p v-for="(genre, i) in genres" :key="i">
+        {{ genre.name }}
+      </p>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import state from "../store.js";
 import genericFlag from "../assets/img/generic.png";
 
@@ -45,7 +58,42 @@ export default {
     return {
       genericFlag: genericFlag,
       flags: state.flags,
+      actors: [],
+      genres: [],
     };
+  },
+
+  methods: {
+    fetchActors() {
+      const URI = `https://api.themoviedb.org/3/tv/${this.serie.id}/credits`;
+      axios
+        .get(`${URI}`, {
+          params: {
+            api_key: state.api_key,
+          },
+        })
+        .then((response) => {
+          this.actors.push(...response.data.cast);
+        });
+    },
+
+    fetchGenres() {
+      const URI = `https://api.themoviedb.org/3/tv/${this.serie.id}`;
+      axios
+        .get(`${URI}`, {
+          params: {
+            api_key: state.api_key,
+          },
+        })
+        .then((response) => {
+          this.genres.push(...response.data.genres);
+        });
+    },
+  },
+
+  beforeMount() {
+    this.fetchActors();
+    this.fetchGenres();
   },
 };
 </script>

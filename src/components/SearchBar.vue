@@ -24,37 +24,33 @@ export default {
   data() {
     return {
       query: ``,
-      original_movies: state.original_movies,
-      original_series: state.original_series,
     };
   },
 
   methods: {
     fetch() {
-      const api_key = `bc703ed01f56d8c42a9afde987ee066f`;
-      const URI = `https://api.themoviedb.org/3/search`;
       state.query = this.query.trim();
 
       axios
-        .get(`${URI}/movie`, {
+        .get(`${state.URI}/movie`, {
           params: {
-            api_key: api_key,
+            api_key: state.api_key,
             query: state.query,
           },
         })
         .then((response) => {
-          this.original_movies.push(...response.data.results);
+          state.original_movies.push(...response.data.results);
         });
 
       axios
-        .get(`${URI}/tv`, {
+        .get(`${state.URI}/tv`, {
           params: {
-            api_key: api_key,
+            api_key: state.api_key,
             query: state.query,
           },
         })
         .then((response) => {
-          this.original_series.push(...response.data.results);
+          state.original_series.push(...response.data.results);
         });
     },
   },
